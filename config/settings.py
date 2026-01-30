@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "users",
     "materials",
     "django_filters",
+    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
@@ -41,6 +42,9 @@ ROOT_URLCONF = "config.urls"
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
 TEMPLATES = [
