@@ -9,6 +9,7 @@ from users.serializers import PaymentsSerializer, UserSerializer
 
 class UserViewSet(viewsets.ViewSet):
     """Временный ViewSet для исправления миграций"""
+
     pass
 
 
@@ -19,9 +20,9 @@ class PaymentsListApiView(generics.ListAPIView):
         DjangoFilterBackend,
         filters.OrderingFilter,
     ]
-    filterset_fields = ['course', 'lesson','payment_method']
-    ordering_fields = ['payment_date', 'amount', 'id']
-    search_fields = ['-payment_date']
+    filterset_fields = ["course", "lesson", "payment_method"]
+    ordering_fields = ["payment_date", "amount", "id"]
+    search_fields = ["-payment_date"]
 
 
 class CreateAPIView(generics.CreateAPIView):

@@ -2,15 +2,16 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from materials.models import Course, Lesson
+
 from users.constants import PAYMENT_METHODS
+
 
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError('Email обязателен')
+            raise ValueError("Email обязателен")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -18,11 +19,12 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
 
         return self.create_user(email, password, **extra_fields)
+
 
 class User(AbstractUser):
     username = None
@@ -50,27 +52,40 @@ class User(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
+
 class Payments(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='payments')
-    payment_date = models.DateTimeField(auto_now_add=True,verbose_name="Дата оплаты",)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='payments',
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments")
+    payment_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата оплаты",
+    )
+    course = models.ForeignKey(
+        'materials.Course',
+        on_delete=models.CASCADE,
+        related_name="payments",
         blank=True,
         null=True,
-        verbose_name="Оплаченный курс",)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE,related_name='payments',
+        verbose_name="Оплаченный курс",
+    )
+    lesson = models.ForeignKey(
+        'materials.Lesson',
+        on_delete=models.CASCADE,
+        related_name="payments",
         blank=True,
         null=True,
-        verbose_name="Оплаченный урок",)
+        verbose_name="Оплаченный урок",
+    )
     amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        verbose_name="Сумма оплаты",)
+        verbose_name="Сумма оплаты",
+    )
     payment_method = models.CharField(
         max_length=20,
         choices=PAYMENT_METHODS,
         verbose_name="Способ оплаты",
-        help_text="Выберите способ оплаты"
+        help_text="Выберите способ оплаты",
     )
 
     def __str__(self):
@@ -83,4 +98,3 @@ class Payments(models.Model):
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
-
