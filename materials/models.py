@@ -46,7 +46,7 @@ class Lesson(models.Model):
         help_text="Укажите описание для курса",
         verbose_name="Описание",
     )
-    models.URLField(
+    video_link = models.URLField(
         verbose_name="Ссылка на видео",
         blank=True,
         null=True,

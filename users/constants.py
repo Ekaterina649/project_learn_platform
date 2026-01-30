@@ -1,0 +1,7 @@
+PAYMENT_METHOD_CASH = 'cash'
+PAYMENT_METHOD_TRANSFER = 'transfer'
+
+PAYMENT_METHODS = [
+    (PAYMENT_METHOD_CASH, 'Наличные'),
+    (PAYMENT_METHOD_TRANSFER, 'Перевод на счет'),
+]
