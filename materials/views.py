@@ -23,13 +23,25 @@ class CourseViewSet(ModelViewSet):
             self.permission_classes = (IsModer | IsOwner,)
         elif self.action == 'destroy':
             self.permission_classes = (~IsModer | IsOwner,)
-        return self.permission_classes
+        return [perm() for perm in self.permission_classes]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if not self.request.user.groups.filter(name='Модератор').exists():
+            qs = qs.filter(owner=self.request.user)
+        return qs
 
 
 
 class LessonListApiView(generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if not self.request.user.groups.filter(name='Модератор').exists():
+            qs = qs.filter(owner=self.request.user)
+        return qs
 
 
 
