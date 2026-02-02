@@ -41,7 +41,7 @@ class CourseViewSet(ModelViewSet):
 
 
 class LessonListApiView(generics.ListAPIView):
-    queryset = Lesson.objects.all()
+    queryset = Lesson.objects.all().order_by('id')
     serializer_class = LessonSerializer
     pagination_class = PaginationMaterials
 
