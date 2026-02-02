@@ -1,6 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from django.db import models
 
 from materials.models import Course, Lesson
 from materials.serializers import CourseSerializer, LessonSerializer
@@ -27,9 +28,13 @@ class CourseViewSet(ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if not self.request.user.groups.filter(name='Модератор').exists():
-            qs = qs.filter(owner=self.request.user)
-        return qs
+        user = self.request.user
+        if user.groups.filter(name='Модератор').exists():
+            return qs
+        return qs.filter(
+            models.Q(owner=user) |
+            models.Q(subscriptions__user=user)  # Используем related_name
+        ).distinct()
 
 
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import Payments, User
+from users.models import Payments, User, Subscription
 
 
 class PaymentsSerializer(serializers.ModelSerializer):
@@ -25,3 +25,9 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(password)
         user.save()
         return user
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = "__all__"
+        read_only_fields = ['user',]
