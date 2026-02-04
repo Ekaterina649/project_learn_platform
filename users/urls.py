@@ -1,12 +1,28 @@
 from django.urls import path
+from rest_framework.permissions import AllowAny
 
-from users.views import PaymentsListApiView
+from users.apps import UsersConfig
+from users.views import PaymentsListApiView, CreateAPIView, SubscriptionApiView
 
-app_name = 'users'
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
-
+app_name = "users"
 
 urlpatterns = [
+    path("register/", CreateAPIView.as_view(), name="register"),
+    path(
+        "login/",
+        TokenObtainPairView.as_view(permission_classes=(AllowAny,)),
+        name="login",
+    ),
+    path(
+        "token/refresh/",
+        TokenRefreshView.as_view(permission_classes=(AllowAny,)),
+        name="token_refresh",
+    ),
     path("payments/", PaymentsListApiView.as_view()),
+    path("subscription/", SubscriptionApiView.as_view(), name='subscription'),
 ]
-
