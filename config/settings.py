@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "materials",
     "django_filters",
     "rest_framework_simplejwt",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -119,3 +120,16 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Введите JWT токен в формате: Bearer <access_token>",
+        }
+    }
+}
+
+
