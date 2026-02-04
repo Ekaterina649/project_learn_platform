@@ -1,8 +1,10 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from django.db import models
 
 from materials.models import Course, Lesson
+from materials.pagination import PaginationMaterials
 from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModer, IsOwner
 
@@ -10,6 +12,7 @@ from users.permissions import IsModer, IsOwner
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    pagination_class  = PaginationMaterials
 
     def perform_create(self, serializer):
         course = serializer.save()
@@ -27,15 +30,20 @@ class CourseViewSet(ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if not self.request.user.groups.filter(name='Модератор').exists():
-            qs = qs.filter(owner=self.request.user)
-        return qs
+        user = self.request.user
+        if user.groups.filter(name='Модератор').exists():
+            return qs
+        return qs.filter(
+            models.Q(owner=user) |
+            models.Q(subscriptions__user=user)  # Используем related_name
+        ).distinct()
 
 
 
 class LessonListApiView(generics.ListAPIView):
-    queryset = Lesson.objects.all()
+    queryset = Lesson.objects.all().order_by('id')
     serializer_class = LessonSerializer
+    pagination_class = PaginationMaterials
 
     def get_queryset(self):
         qs = super().get_queryset()

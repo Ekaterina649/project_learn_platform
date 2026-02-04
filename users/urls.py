@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework.permissions import AllowAny
 
 from users.apps import UsersConfig
-from users.views import PaymentsListApiView, CreateAPIView
+from users.views import PaymentsListApiView, CreateAPIView, SubscriptionApiView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -24,4 +24,5 @@ urlpatterns = [
         name="token_refresh",
     ),
     path("payments/", PaymentsListApiView.as_view()),
+    path("subscription/", SubscriptionApiView.as_view(), name='subscription'),
 ]
