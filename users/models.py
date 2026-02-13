@@ -87,6 +87,10 @@ class Payments(models.Model):
         verbose_name="Способ оплаты",
         help_text="Выберите способ оплаты",
     )
+    stripe_product_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_price_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_session_id = models.CharField(max_length=255, blank=True, null=True)
+    payment_url = models.URLField(max_length=2000, blank=True, null=True)
 
     def __str__(self):
         if self.course:
