@@ -1,0 +1,68 @@
+version: '3.9'
+
+services:
+  backend:
+    build: .
+    command: >
+        bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+    environment:
+      - DEBUG=True
+      - DATABASE_HOST=db
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+    depends_on:
+      db:
+        condition: service_healthy     # ← вот это самое важное
+      redis:
+        condition: service_started
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:16
+    env_file:
+      - .env
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+  redis:
+    image: redis:7
+
+  celery:
+    build: .
+    command: celery -A config worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  celery-beat:
+    build: .
+    command: celery -A config beat --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+
+volumes:
+  postgres_data:
+  static_volume:
