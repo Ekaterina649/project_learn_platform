@@ -3,6 +3,7 @@ version: '3.9'
 services:
   backend:
     build: .
+    restart: always
     command: >
       bash -c "python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
     environment:
@@ -22,6 +23,7 @@ services:
 
   db:
     image: postgres:16
+    restart: always
     env_file:
       - .env
     expose:
@@ -37,9 +39,11 @@ services:
 
   redis:
     image: redis:7
+    restart: always
 
   celery:
     build: .
+    restart: always
     command: celery -A config worker --loglevel=info
     env_file:
       - .env
@@ -51,6 +55,7 @@ services:
 
   celery-beat:
     build: .
+    restart: always
     command: celery -A config beat --loglevel=info
     env_file:
       - .env
